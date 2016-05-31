@@ -80,6 +80,20 @@
     myApp.factory('topicFactory', function($http) {
         var factory = [];
 
+        factory.up = function(id, callback) {
+          $http.get('/post/' + id + '/up').success(function(output) {
+              console.log('topicFactory after factory.up', output);
+              callback(output);  //output is the topic list fetched from db
+          });          
+        };
+
+        factory.down = function(id, callback) {
+          $http.get('/post/' + id + '/down').success(function(output) {
+              console.log('topicFactory after factory.down', output);
+              callback(output);  //output is the topic list fetched from db
+          });          
+        };
+
         factory.getTopics = function(callback) {
           $http.get('/topics').success(function(output) {
               console.log('topicFactory', output);
@@ -176,6 +190,20 @@
 
     myApp.controller('topicDetailController', function ($scope, $routeParams, topicFactory, loginFactory, $location)
     {
+      $scope.up = function(post) {
+         topicFactory.up(post._id, function(data) {
+            console.log('topicFactory.up data=', data.upCount);
+            post.upCount = data.upCount;
+         });        
+      };
+
+      $scope.down = function(post) {
+         topicFactory.down(post._id, function(data) {
+             console.log('topicFactory.down data=', data.downCount);
+             post.downCount = data.downCount;
+         });  
+      };
+
       $scope.addPost = function(postContent) {
         var currentUser = loginFactory.getLoggedUser();
         $scope.currentUser = currentUser; // to display current user

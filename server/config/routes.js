@@ -14,6 +14,14 @@
       topics.addPost(req, res);
     });
 
+    app.get('/post/:id/up', function(req, res) {
+      topics.up(req, res);
+    });
+
+    app.get('/post/:id/down', function(req, res) {
+      topics.down(req, res);
+    });
+
     app.post('/post/:id', function(req, res) {
       topics.addComment(req, res);
     });

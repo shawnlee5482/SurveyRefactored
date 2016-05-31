@@ -7,6 +7,44 @@ var Comment = mongoose.model('Comment');
 // Edit the show method as follows
 module.exports = (function() {
 	return {
+		up: function(req, res) {
+			console.log('Post.findOne. just before');
+			Post.findOne({_id:req.params.id}, function(err, result) {
+				if(err) {
+					console.log('there is an error in Post.findOne - up');
+				} else {
+					result.upCount++;
+					console.log('server topic controller up', result.upCount);
+					result.save(function(err) {
+						if(err) {
+							console.log('server topic controller up save error');
+						} else {
+							console.log('server topic controller up save Successfully');
+							res.json({upCount:result.upCount});							
+						}
+					});
+
+				}
+			});
+		},
+		down: function(req, res) {
+			Post.findOne({_id:req.params.id}, function(err, result) {
+				if(err) {
+					console.log('there is an error in Post.findOne - down');
+				} else {
+					result.downCount++;
+					console.log('server topic controller down', result.downCount);
+					result.save(function(err) {
+						if(err) {
+							console.log('server topic controller up save error');
+						} else {
+							console.log('server topic controller up save Successfully');
+							res.json({downCount:result.downCount});							
+						}
+					});
+				}
+			});
+		},
 		index: function(req, res) {
 			Topics.find({})
 			.populate('posts')
@@ -52,7 +90,7 @@ module.exports = (function() {
 					var topic = results[req.params.topicIndex];
 					console.log('topic controller input parameter:', req.body.postContent, req.body.currentUser);
 					var newPost = new Post({_topic:topic, postContent:req.body.postContent, user:req.body.currentUser,
-						comments:[]});
+						comments:[], upCount: 0, downCount:0});
 
 					newPost.save(function(err) {
 						if(err) {
