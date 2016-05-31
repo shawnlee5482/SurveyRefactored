@@ -1,0 +1,24 @@
+<div ng-controller="topicDetailController" ng-init="getTopicDetails()">
+<h2>Logged in as '{{currentUser}}'</h2>
+<label><a ng-href="/#user/{{topicOwner}}">{{topicOwner}}</a></label> <label> posted a topic </label> <br>
+<blockquote ng-bind="topicName">
+	Description: <label ng-bind="topicDescription"></label><br>
+</blockquote>
+<blockquote>Post your answer here.</blockquote>	
+
+<blockquote>
+	<textarea rows="3" cols="70" ng-model="post"></textarea><br>
+	<button ng-click="addPost(post)">Post</button>
+</blockquote>
+<hr>
+<div ng-repeat='post in posts'>
+	<label> <a ng-href="/#user/{{post.user}}">{{post.user}}</a>  </label>:
+	<label ng-bind='post.postContent'></label><br>
+	<blockquote>
+		<div ng-repeat='comment in post.comments'>
+			<a ng-href="/#user/{{comment.user}}">{{comment.user}}</a>:{{comment.comment}}
+		</div>
+		<textarea rows="3" cols="70" ng-model="comment"></textarea><br>
+		<button ng-click="addComment(post, comment)">Comment</button><br>
+	</blockquote>
+</div>

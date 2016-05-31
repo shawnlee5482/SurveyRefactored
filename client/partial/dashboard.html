@@ -1,0 +1,35 @@
+<div ng-controller="dashboardController">
+  <style>
+  </style>
+  <div>
+    <h3>Welcome {{getLoggedUser()}}!</h3>
+    <input type="text" ng-model="keyword" placeholder="Search"> 
+  </div>
+
+  <table class="table table-condensed" ng-init="getTopics()">
+      <thead>
+          <tr>
+              <th>Category</th>
+              <th>Topic</th>
+              <th>User Name</th>
+              <th>Posts</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr ng-repeat='topic in topics | filter: {"topic" : keyword} | orderBy: "-date"'>
+              <td ng-bind='topic.category'></td>
+              <td><a ng-href="/#topic/{{$index}}">{{topic.topic}}</a></td>
+              <td><a ng-href="/#user/{{topic.userName}}">{{topic.userName}}</a></td>
+              <td ng-bind='topic.posts.length'></td>
+          </tr>
+      </tbody>
+  </table>
+  <h3>Add a New Topic</h3>
+  Topic<br>
+  <input type="text" ng-model="topicName" placeholder="Name the topic"><br>
+  Description<br>
+  <textarea rows="5" cols="30" ng-model="topicDescription" placeholder="Describe your topic here"></textarea><br>
+  Category<select ng-model="topicCategory" ng-init="topicCategories = ['General', 'Product', 'QnA', 'Discussion', 'Misc']" ng-options="topicCategory for topicCategory in topicCategories"></select> <br>
+  <input type="submit" ng-click="addTopic()">  
+  </div>
+</div>
