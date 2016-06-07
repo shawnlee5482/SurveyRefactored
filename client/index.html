@@ -16,259 +16,224 @@
     // setup route
     myApp.config(function($routeProvider) {
         $routeProvider
-        .when('/customers', {
-            templateUrl: 'partial/customers.html'})
-        .when('/products', {
-            templateUrl: 'partial/products.html'})
-        .when('/orders', {
-            templateUrl: 'partial/orders.html'})  
+        .when('/', {
+            templateUrl: 'partial/dashboard.html'})        
         .when('/dashboard', {
-            templateUrl: 'partial/dashboard.html'}) 
-        .when('/login', {
-            templateUrl: 'partial/login.html'})
-        .when('/user/:userName', {
-            templateUrl: 'partial/userProfile.html', controller: 'userProfileController'})
-        .when('/topic/:topicIndex', {
-            templateUrl: 'partial/topicDetail.html', controller: 'topicDetailController'})
+            templateUrl: 'partial/dashboard.html'})
+        .when('/question', {
+            templateUrl: 'partial/question.html'})
+        .when('/newquestion', {
+            templateUrl: 'partial/newquestion.html'})  
         .otherwise( {
-            templateUrl: 'partial/login.html'}) 
+            templateUrl: 'partial/dashboard.html'}) 
     });
 
     // loginFactory
-    myApp.factory('loginFactory', function($http) {
-        var factory = {loggedUserName: "Anonymous", userlist:[]};
+    myApp.factory('dashboardFactory', function($http) {
+        var factory = {loggedUserName: ""};
 
+        // local
         factory.setLoggedUser = function(name) {
           factory.loggedUserName = name;
-        }
+        };
 
+        // local
         factory.getLoggedUser = function() {
           return factory.loggedUserName;
+        };
+
+        factory.setCurrentScore = function(score) {
+          factory.currentScore = score;
+        };
+
+        factory.getCurrentScore = function() {
+          return factory.currentScore;
         }
 
-        factory.addUser = function(name, callback) {
-          // should store at db
-            var p = {name:name};
-            $http.post('/users', p).success(function(output) {
-                callback(output);  //output is the complete user list
-            });
-        }
+        factory.setShowFlag = function(flag) {
+          factory.showFlag = flag;
+        };
 
-        factory.getUserInfo = function(name, callback) {
-            $http.get('/user/'+ name).success(function(output) {
-                console.log('factory.getUserInfo', output);
-                callback(output);
-            });
+        factory.getShowFlag = function() {
+          return factory.showFlag;
         }
+        // local
+        factory.logOut = function() {
+          factory.loggedUserName = ''; // set it back to null
+          factory.showFlag = false;
+        };
+
+        // ajax
+        factory.getScores = function(callback) {
+          $http.get('/scores').success(function(output) {
+              console.log('dashboardFactory: getScores returned obj from server', output);
+              callback(output);  //output is the topic list fetched from db
+          });  
+        };
 
         return factory;
     });
 
-    myApp.controller('userProfileController', function ($scope, $routeParams, loginFactory)
+    myApp.controller('dashboardController', function ($scope, dashboardFactory, $location)
     {
-      $scope.getUserProfile = function() {
-        loginFactory.getUserInfo($routeParams.userName, function(data) {
-            console.log(data);
-            $scope.name = data.name;
-            $scope.topic = data.numTopic;
-            $scope.post = data.numPost;
-            $scope.comment = data.numComment;
-        });
+      $scope.setLoggedUser = function(name) {
+        dashboardFactory.setLoggedUser(name);
+        $scope.loggedUser = dashboardFactory.getLoggedUser();
       };
+
+      $scope.logIn = function() {
+        var name = prompt('Input your name');
+        if(name) {
+          dashboardFactory.setLoggedUser(name);
+          $scope.loggedUser = dashboardFactory.getLoggedUser();   
+        }     
+      }
+
+      $scope.playGame = function() {
+        $location.url('/question');  // move to question page
+      };
+
+      $scope.getShowResult = function() {
+        return dashboardFactory.getShowFlag();
+      }
+
+      $scope.getLoggedUser = function() {
+        $scope.name = dashboardFactory.getLoggedUser();
+        if($scope.name) return $scope.name;
+        else return false;
+      }
+
+      $scope.getCurrentScore = function() {
+        $scope.currentScore = dashboardFactory.getCurrentScore();;
+      }
+
+      $scope.getScores = function() {
+        dashboardFactory.getScores(function(data) {
+          $scope.scores = data;
+        });
+      }
+
+      $scope.logOut = function() {
+        dashboardFactory.logOut();
+        $scope.name = dashboardFactory.getLoggedUser();
+      }
+
     }); 
 
-    myApp.factory('topicFactory', function($http) {
+    myApp.factory('questionFactory', function($http) {
         var factory = [];
 
-        factory.up = function(id, callback) {
-          $http.get('/post/' + id + '/up').success(function(output) {
-              console.log('topicFactory after factory.up', output);
+        factory.getQuestions = function(callback) {
+          $http.get('/questions').success(function(output) {
+              console.log('questionFactory: getQuestions returned obj from server', output);
               callback(output);  //output is the topic list fetched from db
           });          
         };
 
-        factory.down = function(id, callback) {
-          $http.get('/post/' + id + '/down').success(function(output) {
-              console.log('topicFactory after factory.down', output);
+        factory.submitAnswers = function(answers, questions, user, callback) {
+          $http.post('/answers', {answers: answers, questions: questions, name: user}).success(function(output) {
+              // output does not need to be the result
+              // just redirect to the home page with logged in state
+              // just turn on green flag field on the dashboard page
+              console.log('questionFactory: submitAnswers returned obj from server', output);
               callback(output);  //output is the topic list fetched from db
           });          
         };
 
-        factory.getTopics = function(callback) {
-          $http.get('/topics').success(function(output) {
-              console.log('topicFactory', output);
-              callback(output);  //output is the topic list fetched from db
-          });          
-        };
-
-        factory.getTopicDetails = function(topicIndex, callback) {
-          $http.get('/topic/' + topicIndex).success(function(output) {
-              console.log('topicFactory: getTopicDetails = ', output);            
-              callback(output);
-          });
-        }
-
-        factory.addTopic = function(topic, userName, category, description, callback) {
-            var p = {topic:topic, userName:userName, category:category, description:description};
-            p.date = (new Date()).getTime();
-            $http.post('/topics', p).success(function(output) {
-                callback(output);  //output is the complete user list
-            });
-        };
-
-        factory.addUser = function(name, callback) {
-          // should store at db
-            var p = {name:name};
-            $http.post('/users', p).success(function(output) {
-                callback(output);  //output is the complete user list
-            });
-        };
-
-        factory.addPost = function(topicIndex, postContent, currentUser, callback) {
-            var p = {postContent:postContent, currentUser:currentUser};
-            $http.post('/topic/' + topicIndex, p).success(function(output) {
-                callback(output);  //output is the complete user list
-            });            
-        };
-
-        factory.addComment = function(postId, currentUser, comment, callback) {
-            var p = {currentUser:currentUser, comment:comment};
-            $http.post('/post/' + postId, p).success(function(output) {
-                callback(output);  //output is the complete user list
-            });            
-        };        
         return factory;
     });    
 
     //  orders controller
-    myApp.controller('dashboardController', function($scope, loginFactory, topicFactory, $location) {
+    myApp.controller('questionController', function($scope, questionFactory, dashboardFactory, $location) {
+      $scope.submitAnswers = function() {
+          // check should be done on html side
+          // here just process it
 
-      $scope.getLoggedUser = function() {
-          return loginFactory.getLoggedUser();
-      };
+          console.log($scope.questions);
 
-      $scope.addTopic = function() {
-          topicFactory.addTopic($scope.topicName, loginFactory.getLoggedUser(), $scope.topicCategory, 
-            $scope.topicDescription, function(data) {
-            topicFactory.getTopics(function(d) {
-              $scope.topics = d;
-              console.log($scope.topics);
-            }); 
+          $scope.answers = [];
+          for(question in $scope.questions) {
+            console.log($scope.questions[question].answer);
+            if($scope.questions[question].answer == null) {
+              alert("all question should be answered");
+              return;
+            }
+            $scope.answers.push($scope.questions[question].answer);
+          }
+
+          console.log('submitAnswers. before submit', $scope.answers, $scope.questions);
+          questionFactory.submitAnswers($scope.answers, $scope.questions, dashboardFactory.getLoggedUser(), function(data) {
+            dashboardFactory.setShowFlag(true);
+            dashboardFactory.setCurrentScore(data);
+            // data is the score
+            $location.url('/dashboard');
           });
       };
 
-      $scope.getTopics = function() {
+      $scope.getQuestions = function() {
           // to fill select option menu for customers
-          topicFactory.getTopics(function(data) {
-              $scope.topics = data;
-              console.log($scope.topics);              
+          questionFactory.getQuestions(function(data) {
+              $scope.questions = data;
+              console.log($scope.questions);              
           });                     
       }   
 
+      $scope.cancel = function() {
+        $location.url('/dashboard');   
+      }
+
     });
 
-    myApp.controller('loginController', function ($scope, loginFactory, $location)
-    {
-      $scope.login = function() {
-        if(!$scope.loginName) {
-          alert("You should input name");
-          $location.url('/');
-          return;
-        }
-        loginFactory.addUser($scope.loginName, function(data) {
-          $scope.users = data;
-        });
-        loginFactory.setLoggedUser($scope.loginName); 
-        // now move to dashboard  
-        $location.url('/dashboard');
+    myApp.factory('newQuestionFactory', function($http) {
+        var factory = [];
+
+        factory.newQuestion = function(newQuestions, callback) {
+          $http.post('/newquestion', newQuestions).success(function(output) {
+              callback(output);  //output is the topic list fetched from db
+              // if it is successfully added popup alert 'questions are successfully added'
+          });          
+        };
+
+        return factory;
+    });    
+
+    //  orders controller
+    myApp.controller('newQuestionController', function($scope, newQuestionFactory, dashboardFactory, $location) {
+      $scope.newQuestion = function() {
+          // check should be done on html side
+          // here just process it
+          var q = {question:$scope.question, correctAnswer:$scope.correctAnswer, fakeAnswer1: $scope.fakeAnswer1, fakeAnswer2: $scope.fakeAnswer2, fakeAnswer3: $scope.fakeAnswer3};  
+          newQuestionFactory.newQuestion(q, function(data) {
+            $location.url('/dashboard');
+          });
+      };
+
+      $scope.cancel = function() {
+          $location.url('/dashboard');  // if user cancel to register new question, goto dashboard
+      }
+
+      $scope.getQuestions = function() {
+          // to fill select option menu for customers
+          newQuestionFactory.getQuestions(function(data) {
+              $scope.qustions = data;
+              console.log($scope.questions);              
+          });                     
       };
 
       $scope.getLoggedUser = function() {
-        return loginFactory.getLoggedUser();
-      };
-    });    
+        $scope.name = dashboardFactory.getLoggedUser();
+        console.assert($scope.name != null);
+        return $scope.name;      
+      }  
 
-    myApp.controller('topicDetailController', function ($scope, $routeParams, topicFactory, loginFactory, $location)
-    {
-      $scope.up = function(post) {
-         topicFactory.up(post._id, function(data) {
-            console.log('topicFactory.up data=', data.upCount);
-            post.upCount = data.upCount;
-         });        
-      };
-
-      $scope.down = function(post) {
-         topicFactory.down(post._id, function(data) {
-             console.log('topicFactory.down data=', data.downCount);
-             post.downCount = data.downCount;
-         });  
-      };
-
-      $scope.addPost = function(postContent) {
-        var currentUser = loginFactory.getLoggedUser();
-        $scope.currentUser = currentUser; // to display current user
-        console.log('topicDeatailController: input parameters:', $scope.currentTopicIndex, postContent, currentUser);
-        topicFactory.addPost($scope.currentTopicIndex, postContent, currentUser, function(data) {
-          // data contains posts
-          $scope.posts = data;
-          console.log('topicDetailController: response of addPost', $scope.posts);
-          topicFactory.getTopicDetails($scope.currentTopicIndex, function(data) {
-              console.log('topicDetailController: data=', data);
-              $scope.topicOwner = data.userName;
-              $scope.topicName = data.topic;
-              $scope.topicDescription = data.description;
-              $scope.posts = data.posts;
-              console.log('topicDetailController addPost: data.posts', data);
-          });          
-        });
-      };
-
-      $scope.getTopicDetails = function() {
-        var currentUser = loginFactory.getLoggedUser();
-        $scope.currentUser = currentUser; // to display current user
-        console.log('getTopicDetails:', $routeParams.topicIndex);
-        topicFactory.getTopicDetails($routeParams.topicIndex, function(data) {
-            console.log('topicDetailController: data=', data);
-            $scope.topicOwner = data.userName;
-            $scope.topicName = data.topic;
-            $scope.topicDescription = data.description;
-            $scope.posts = data.posts;
-            console.log('getTopicDetails: data.description', $scope.topicDescription);
-            $scope.currentTopicIndex = $routeParams.topicIndex;
-        });
-      };
-
-      $scope.addComment = function(post, comment) {
-        var currentUser = loginFactory.getLoggedUser();
-        console.log('topicDetailController-addComment-before Factory addPost', $scope.currentTopicIndex, post._id, currentUser, comment);
-        topicFactory.addComment(post._id, currentUser, comment, function(data) {
-            console.log('addComment response from server', data);
-            topicFactory.getTopicDetails($routeParams.topicIndex, function(data) {
-                console.log('topicDetailController: data=', data);
-                $scope.topicOwner = data.userName;
-                $scope.topicName = data.topic;
-                $scope.topicDescription = data.description;
-                $scope.posts = data.posts;
-                console.log('getTopicDetails: data.description', $scope.topicDescription);
-                $scope.currentTopicIndex = $routeParams.topicIndex;
-            });            
-        });
-
-
-      };
-
-    }); 
-
+    });
     </script>
 
   </head>
   <body>
     <div id="main" ng-app='myApp'>
-        <a href="#dashboard">Dashboard</a>
-        <a href="#customers">Customers</a> 
-        <a href="#products">Products</a>
-        <a href="#orders">Orders</a>
-        <a href="#login">Login</a><br><hr>
+        <a href="#dashboard">Home</a>&nbsp&nbsp&nbsp&nbsp
+        <a href="#newquestion">Add a Question</a>
         <div ng-view=""></div>
     </div>
   </body>

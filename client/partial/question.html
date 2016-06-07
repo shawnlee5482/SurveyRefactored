@@ -1,0 +1,18 @@
+<div ng-controller="questionController" ng-init="getQuestions()">
+	Hi {{getLoggedUser()}}! <br>
+	Choose an answer for each of the questions and submit the test once done.
+	Good luck!
+
+	<div ng-repeat='question in questions'>
+		<br>
+		{{$index+1}}.&nbsp {{question.question}}? <br>
+		<input type="radio" ng-model="question.answer" value="1">{{question.correctAnswer}}<br>
+		<input type="radio" ng-model="question.answer" value="2">{{question.fakeAnswer1}}<br>
+		<input type="radio" ng-model="question.answer" value="3">{{question.fakeAnswer2}}<br>
+		<input type="radio" ng-model="question.answer" value="4">{{question.fakeAnswer3}}<br>
+	</div> <br>
+
+	<button ng-click="cancel()">Cancel</button> &nbsp <button ng-click="submitAnswers()">Submit</button>
+</div>
+
+

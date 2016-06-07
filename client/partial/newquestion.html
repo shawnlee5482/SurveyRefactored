@@ -1,0 +1,16 @@
+<div ng-controller="newQuestionController">
+  <h3>New Question!</h3>
+  <style>
+  	span {
+  		display: block;
+  		width: 100px;
+  	}
+  </style>
+  <span>Question</span> <textarea rows="3" cols="30" ng-model="question"></textarea><br>
+  <span>CorrectAnswer</span> <textarea rows="2" cols="30" ng-model="correctAnswer"></textarea><br>
+  <span>FakeAnswer1</span> <textarea rows="2" cols="30" ng-model="fakeAnswer1"></textarea><br>
+  <span>FakeAnswer2</span><textarea rows="2" cols="30" ng-model="fakeAnswer2"></textarea><br>
+  <span>FakeAnswer3</span> <textarea rows="2" cols="30" ng-model="fakeAnswer3"></textarea><br>
+  <button ng-click="cancel()">Cancel</button>&nbsp
+  <button ng-click="newQuestion()">Add Question</button>
+</div>

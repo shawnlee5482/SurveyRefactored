@@ -3,49 +3,24 @@
   // We will have to require this in the server.js file (and pass it app!)
   module.exports = function(app) {
   	// First, at the top of your routes.js file you'll have to require the controller
-    var topics = require('./../controllers/topics.js');
+    var questions = require('./../controllers/questions.js');
+    var scores = require('./../controllers/scores.js');
 
     // Topics
-    app.get('/topic/:topicIndex', function(req, res) {
-      topics.detailInfo(req, res);
+    app.get('/questions', function(req, res) {
+      console.log('/questions is called');
+      questions.getQuestions(req, res);
     });
 
-    app.post('/topic/:topicIndex', function(req, res) {
-      topics.addPost(req, res);
+    app.post('/answers', function(req, res) {
+      questions.submitAnswers(req, res);
     });
 
-    app.get('/post/:id/up', function(req, res) {
-      topics.up(req, res);
-    });
-
-    app.get('/post/:id/down', function(req, res) {
-      topics.down(req, res);
-    });
-
-    app.post('/post/:id', function(req, res) {
-      topics.addComment(req, res);
-    });
-
-    app.get('/topics', function(req, res) {     
-      topics.index(req, res);
-    }); 
-
-    app.post('/topics', function(req, res) { 
-      console.log('app.post', req.body.category, req.body.topic, req.body.userName, req.body.description);    
-      topics.create(req, res);
-    }); 
-
-    // First, at the top of your routes.js file you'll have to require the controller
-    var users = require('./../controllers/users.js');
-
-    app.post('/users', function(req, res) {
-      users.create(req, res);
-      res.send('ok');
-    });     
-
-    app.get('/user/:userName', function(req, res) {
-      users.get(req, res);
+    app.get('/scores', function(req, res) {
+      scores.getScores(req, res);
     });    
 
-      
+    app.post('/newquestion', function(req, res) {
+      questions.newQuestion(req, res);
+    });      
 };

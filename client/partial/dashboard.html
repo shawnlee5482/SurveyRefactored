@@ -2,34 +2,30 @@
   <style>
   </style>
   <div>
-    <h3>Welcome {{getLoggedUser()}}!</h3>
-    <input type="text" ng-model="keyword" placeholder="Search"> 
+    <h3 ng-show="getShowResult()" ng-init="getCurrentScore()">That was great. {{getLoggedUser()}}! Your score is {{currentScore.correct}}/{{currentScore.total}} ({{currentScore.percentage}})</h3><br>
+    <button ng-hide="getLoggedUser()" ng-click="logIn()">Login</button>
+    <h3 ng-hide="getLoggedUser()">Press Login to enjoy game</h3>
+    <button ng-show="getLoggedUser()" ng-click="logOut()">LogOut</button>
+    <button ng-show="getLoggedUser()" ng-click="playGame()">Play Game</button>
+    <h3 ng-show="getLoggedUser()"> Hi {{getLoggedUser()}}!! Click the button above to start the trivia game </h3>  
   </div>
 
-  <table class="table table-condensed" ng-init="getTopics()">
+  Search: <input type="text" ng-model="filter_name">
+  <table class="table table-condensed" ng-init="getScores()">
+
       <thead>
           <tr>
-              <th>Category</th>
-              <th>Topic</th>
-              <th>User Name</th>
-              <th>Posts</th>
+              <th>Name</th>
+              <th>Score</th>
+              <th>Percentage</th>
           </tr>
       </thead>
       <tbody>
-          <tr ng-repeat='topic in topics | filter: {"topic" : keyword} | orderBy: "-date"'>
-              <td ng-bind='topic.category'></td>
-              <td><a ng-href="/#topic/{{$index}}">{{topic.topic}}</a></td>
-              <td><a ng-href="/#user/{{topic.userName}}">{{topic.userName}}</a></td>
-              <td ng-bind='topic.posts.length'></td>
+          <tr ng-repeat='score in scores | filter: filter_name'>
+              <td ng-bind='score.name'></td>
+              <td ng-bind='score.score'></td>
+              <td ng-bind='score.percentage'></td>
           </tr>
       </tbody>
   </table>
-  <h3>Add a New Topic</h3>
-  Topic<br>
-  <input type="text" ng-model="topicName" placeholder="Name the topic"><br>
-  Description<br>
-  <textarea rows="5" cols="30" ng-model="topicDescription" placeholder="Describe your topic here"></textarea><br>
-  Category<select ng-model="topicCategory" ng-init="topicCategories = ['General', 'Product', 'QnA', 'Discussion', 'Misc']" ng-options="topicCategory for topicCategory in topicCategories"></select> <br>
-  <input type="submit" ng-click="addTopic()">  
-  </div>
 </div>
