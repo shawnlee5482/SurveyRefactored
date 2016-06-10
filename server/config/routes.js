@@ -7,8 +7,8 @@
     var scores = require('./../controllers/scores.js');
 
     // Topics
-    app.get('/questions', function(req, res) {
-      console.log('/questions is called');
+    app.get('/questions/:numQuestionRequired', function(req, res) {
+      console.log('/questions is called. req.params.numQuestionRequired = ', req.params.numQuestionRequired);
       questions.getQuestions(req, res);
     });
 

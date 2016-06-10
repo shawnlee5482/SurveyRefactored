@@ -9,10 +9,19 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
     <script>
     //  inject the ngRoute dependency in the module.
     var myApp = angular.module('myApp', ['ngRoute']);
+    </script>
 
+ <!-- PUT CONTROLLERS AND FACTORIES HERE!!!! -->    
+    <script src="./controllers/dashboardController.js"></script> 
+    <script src="./controllers/questionController.js"></script>
+    <script src="./controllers/newQuestionController.js"></script>   
+ <!-- PUT CONTROLLERS AND FACTORIES HERE!!!! -->      
+
+    <script>
     // setup route
     myApp.config(function($routeProvider) {
         $routeProvider
@@ -28,205 +37,13 @@
             templateUrl: 'partial/dashboard.html'}) 
     });
 
-    // loginFactory
-    myApp.factory('dashboardFactory', function($http) {
-        var factory = {loggedUserName: ""};
-
-        // local
-        factory.setLoggedUser = function(name) {
-          factory.loggedUserName = name;
-        };
-
-        // local
-        factory.getLoggedUser = function() {
-          return factory.loggedUserName;
-        };
-
-        factory.setCurrentScore = function(score) {
-          factory.currentScore = score;
-        };
-
-        factory.getCurrentScore = function() {
-          return factory.currentScore;
-        }
-
-        factory.setShowFlag = function(flag) {
-          factory.showFlag = flag;
-        };
-
-        factory.getShowFlag = function() {
-          return factory.showFlag;
-        }
-        // local
-        factory.logOut = function() {
-          factory.loggedUserName = ''; // set it back to null
-          factory.showFlag = false;
-        };
-
-        // ajax
-        factory.getScores = function(callback) {
-          $http.get('/scores').success(function(output) {
-              console.log('dashboardFactory: getScores returned obj from server', output);
-              callback(output);  //output is the topic list fetched from db
-          });  
-        };
-
-        return factory;
-    });
-
-    myApp.controller('dashboardController', function ($scope, dashboardFactory, $location)
-    {
-      $scope.setLoggedUser = function(name) {
-        dashboardFactory.setLoggedUser(name);
-        $scope.loggedUser = dashboardFactory.getLoggedUser();
-      };
-
-      $scope.logIn = function() {
-        var name = prompt('Input your name');
-        if(name) {
-          dashboardFactory.setLoggedUser(name);
-          $scope.loggedUser = dashboardFactory.getLoggedUser();   
-        }     
-      }
-
-      $scope.playGame = function() {
-        $location.url('/question');  // move to question page
-      };
-
-      $scope.getShowResult = function() {
-        return dashboardFactory.getShowFlag();
-      }
-
-      $scope.getLoggedUser = function() {
-        $scope.name = dashboardFactory.getLoggedUser();
-        if($scope.name) return $scope.name;
-        else return false;
-      }
-
-      $scope.getCurrentScore = function() {
-        $scope.currentScore = dashboardFactory.getCurrentScore();;
-      }
-
-      $scope.getScores = function() {
-        dashboardFactory.getScores(function(data) {
-          $scope.scores = data;
-        });
-      }
-
-      $scope.logOut = function() {
-        dashboardFactory.logOut();
-        $scope.name = dashboardFactory.getLoggedUser();
-      }
-
-    }); 
-
-    myApp.factory('questionFactory', function($http) {
-        var factory = [];
-
-        factory.getQuestions = function(callback) {
-          $http.get('/questions').success(function(output) {
-              console.log('questionFactory: getQuestions returned obj from server', output);
-              callback(output);  //output is the topic list fetched from db
-          });          
-        };
-
-        factory.submitAnswers = function(answers, questions, user, callback) {
-          $http.post('/answers', {answers: answers, questions: questions, name: user}).success(function(output) {
-              // output does not need to be the result
-              // just redirect to the home page with logged in state
-              // just turn on green flag field on the dashboard page
-              console.log('questionFactory: submitAnswers returned obj from server', output);
-              callback(output);  //output is the topic list fetched from db
-          });          
-        };
-
-        return factory;
-    });    
-
-    //  orders controller
-    myApp.controller('questionController', function($scope, questionFactory, dashboardFactory, $location) {
-      $scope.submitAnswers = function() {
-          // check should be done on html side
-          // here just process it
-
-          console.log($scope.questions);
-
-          $scope.answers = [];
-          for(question in $scope.questions) {
-            console.log($scope.questions[question].answer);
-            if($scope.questions[question].answer == null) {
-              alert("all question should be answered");
-              return;
-            }
-            $scope.answers.push($scope.questions[question].answer);
-          }
-
-          console.log('submitAnswers. before submit', $scope.answers, $scope.questions);
-          questionFactory.submitAnswers($scope.answers, $scope.questions, dashboardFactory.getLoggedUser(), function(data) {
-            dashboardFactory.setShowFlag(true);
-            dashboardFactory.setCurrentScore(data);
-            // data is the score
-            $location.url('/dashboard');
-          });
-      };
-
-      $scope.getQuestions = function() {
-          // to fill select option menu for customers
-          questionFactory.getQuestions(function(data) {
-              $scope.questions = data;
-              console.log($scope.questions);              
-          });                     
-      }   
-
-      $scope.cancel = function() {
-        $location.url('/dashboard');   
-      }
-
-    });
-
-    myApp.factory('newQuestionFactory', function($http) {
-        var factory = [];
-
-        factory.newQuestion = function(newQuestions, callback) {
-          $http.post('/newquestion', newQuestions).success(function(output) {
-              callback(output);  //output is the topic list fetched from db
-              // if it is successfully added popup alert 'questions are successfully added'
-          });          
-        };
-
-        return factory;
-    });    
-
-    //  orders controller
-    myApp.controller('newQuestionController', function($scope, newQuestionFactory, dashboardFactory, $location) {
-      $scope.newQuestion = function() {
-          // check should be done on html side
-          // here just process it
-          var q = {question:$scope.question, correctAnswer:$scope.correctAnswer, fakeAnswer1: $scope.fakeAnswer1, fakeAnswer2: $scope.fakeAnswer2, fakeAnswer3: $scope.fakeAnswer3};  
-          newQuestionFactory.newQuestion(q, function(data) {
-            $location.url('/dashboard');
-          });
-      };
-
-      $scope.cancel = function() {
-          $location.url('/dashboard');  // if user cancel to register new question, goto dashboard
-      }
-
-      $scope.getQuestions = function() {
-          // to fill select option menu for customers
-          newQuestionFactory.getQuestions(function(data) {
-              $scope.qustions = data;
-              console.log($scope.questions);              
-          });                     
-      };
-
-      $scope.getLoggedUser = function() {
-        $scope.name = dashboardFactory.getLoggedUser();
-        console.assert($scope.name != null);
-        return $scope.name;      
-      }  
-
-    });
+    // Factories and Controllers
+    myApp.factory('dashboardFactory', dashboardFactory);
+    myApp.controller('dashboardController', dashboardController); 
+    myApp.factory('questionFactory', questionFactory);
+    myApp.controller('questionController', questionController); 
+    myApp.factory('newQuestionFactory', newQuestionFactory);
+    myApp.controller('newQuestionController', newQuestionController); 
     </script>
 
   </head>
