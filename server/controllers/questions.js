@@ -72,7 +72,7 @@ module.exports = (function() {
 			var correctAnswer = [];
 			var funcList = [];
 
-			async.eachSeries(questions, function (item, callback) {
+			async.each(questions, function (item, callback) {
 				console.log('starting new callack for individual item');
 				Questions.findOne({_id: item._id}, function(err, result) {
 					if(err) {

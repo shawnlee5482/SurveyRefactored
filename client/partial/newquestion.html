@@ -12,5 +12,6 @@
   <span>FakeAnswer2</span><textarea rows="2" cols="30" ng-model="fakeAnswer2"></textarea><br>
   <span>FakeAnswer3</span> <textarea rows="2" cols="30" ng-model="fakeAnswer3"></textarea><br>
   <button ng-click="cancel()">Cancel</button>&nbsp
-  <button ng-click="newQuestion()">Add Question</button>
+  <button ng-show="isValid()" ng-click="newQuestion()">Add Question</button> <br>
+  <p ng-show="!isValid()" style="color:red">Please input at least 15 characters for each field</p>
 </div>

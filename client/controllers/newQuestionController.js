@@ -41,4 +41,15 @@ var newQuestionController = function($scope, newQuestionFactory, dashboardFactor
     return $scope.name;      
   }  
 
+  $scope.isValid = function() {
+    var q = {question:$scope.question, correctAnswer:$scope.correctAnswer, fakeAnswer1: $scope.fakeAnswer1, fakeAnswer2: $scope.fakeAnswer2, fakeAnswer3: $scope.fakeAnswer3};  
+
+    if(q.question && q.question.length >= 15 &&
+      q.correctAnswer && q.correctAnswer.length >= 15 &&
+      q.fakeAnswer1 && q.fakeAnswer1.length >= 15 &&
+      q.fakeAnswer2 && q.fakeAnswer2.length >= 15 &&
+      q.fakeAnswer3 && q.fakeAnswer3.length >= 15) return true;
+    return false;      
+  }  
+
 };
