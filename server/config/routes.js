@@ -4,23 +4,39 @@
   module.exports = function(app) {
   	// First, at the top of your routes.js file you'll have to require the controller
     var questions = require('./../controllers/questions.js');
-    var scores = require('./../controllers/scores.js');
-
+    var answers = require('./../controllers/answers.js');
+    var users = require('./../controllers/users.js');
     // Topics
-    app.get('/questions/:numQuestionRequired', function(req, res) {
-      console.log('/questions is called. req.params.numQuestionRequired = ', req.params.numQuestionRequired);
+
+    app.get('/question/:id', function(req, res) {
+      console.log('app.get /question is called', req.params.id);
+      questions.getQuestion(req, res);
+    });
+
+    app.get('/questions', function(req, res) {
+      console.log('app.get /questions is called');
       questions.getQuestions(req, res);
     });
 
-    app.post('/answers', function(req, res) {
+    app.get('/answers', function(req, res) {
       questions.submitAnswers(req, res);
-    });
+    }); 
 
-    app.get('/scores', function(req, res) {
-      scores.getScores(req, res);
-    });    
+    app.post('/answer/like', function(req, res) {
+      answers.like(req, res);
+    }); 
 
     app.post('/newquestion', function(req, res) {
       questions.newQuestion(req, res);
+    });
+
+    app.post('/user', function(req, res) {
+      console.log('app.post /user ', req.body);
+      users.newUser(req, res);
     });      
+
+    app.post('/newanswer', function(req, res) {
+      answers.newAnswer(req, res);
+    });  
+
 };

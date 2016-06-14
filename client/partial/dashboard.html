@@ -1,31 +1,25 @@
-<div ng-controller="dashboardController">
-  <style>
-  </style>
-  <div>
-    <h3 ng-show="getShowResult()" ng-init="getCurrentScore()">That was great. {{getLoggedUser()}}! Your score is {{currentScore.correct}}/{{currentScore.total}} ({{currentScore.percentage}})</h3><br>
-    <button ng-hide="getLoggedUser()" ng-click="logIn()">Login</button>
-    <h3 ng-hide="getLoggedUser()">Press Login to enjoy game</h3>
-    <button ng-show="getLoggedUser()" ng-click="logOut()">LogOut</button>
-    <button ng-show="getLoggedUser()" ng-click="playGame()">Play Game</button>
-    <h3 ng-show="getLoggedUser()"> Hi {{getLoggedUser()}}!! Click the button above to start the trivia game </h3>  
-  </div>
-
-  Search: <input type="text" ng-model="filter_name">
-  <table class="table table-condensed" ng-init="getScores()">
-
-      <thead>
-          <tr>
-              <th>Name</th>
-              <th>Score</th>
-              <th>Percentage</th>
-          </tr>
-      </thead>
-      <tbody>
-          <tr ng-repeat='score in scores | filter: filter_name'>
-              <td ng-bind='score.name'></td>
-              <td ng-bind='score.score'></td>
-              <td ng-bind='score.percentage'></td>
-          </tr>
-      </tbody>
-  </table>
+<style>
+</style>
+<div>
+  <button ng-hide="getLoggedUser()" ng-click="logIn()">Login</button>
+  <h3 ng-hide="getLoggedUser()">Press Login to ask a question and answer</h3>
+  <button ng-show="getLoggedUser()" ng-click="logOut()">LogOut</button>
 </div>
+
+Search: <input type="text" ng-model="filter_name">
+<table class="table table-condensed" ng-init="getQuestions()">
+    <thead>
+        <tr>
+            <th>Quetion</th>
+            <th>Answers</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat='question in questions | filter: filter_name | orderBy: "-createdAt"'>
+            <td ng-bind='question.title'></td>
+            <td ng-bind='question._answers.length'></td>
+            <td> <a ng-href="/#question/{{question._id}}">Show</a> <a ng-href="/#answers/{{question._id}}">Answer</a></td>
+        </tr>
+    </tbody>
+</table>

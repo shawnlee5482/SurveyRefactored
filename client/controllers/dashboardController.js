@@ -1,41 +1,28 @@
 var dashboardFactory = function($http) {
-  var factory = {loggedUserName: ""};
+  var factory = {};
 
   // local
   factory.setLoggedUser = function(name) {
-    factory.loggedUserName = name;
+    console.log('factory.setLoggedUser: ', name);
+    $http.post('/user', {name: name}).success(function(output) {
+        factory.loggedUser = output;
+        console.log('dashboardController seetLoggedUser result from server ', factory.loggedUser);
+    });     
   };
+
+  factory.logOut = function() {
+    factory.loggedUser = null;
+  }
 
   // local
   factory.getLoggedUser = function() {
-    return factory.loggedUserName;
-  };
-
-  factory.setCurrentScore = function(score) {
-    factory.currentScore = score;
-  };
-
-  factory.getCurrentScore = function() {
-    return factory.currentScore;
-  }
-
-  factory.setShowFlag = function(flag) {
-    factory.showFlag = flag;
-  };
-
-  factory.getShowFlag = function() {
-    return factory.showFlag;
-  }
-  // local
-  factory.logOut = function() {
-    factory.loggedUserName = ''; // set it back to null
-    factory.showFlag = false;
+    return factory.loggedUser;
   };
 
   // ajax
-  factory.getScores = function(callback) {
-    $http.get('/scores').success(function(output) {
-        console.log('dashboardFactory: getScores returned obj from server', output);
+  factory.getQuestions = function(callback) {
+    $http.get('/questions').success(function(output) {
+        console.log('dashboard getquestions: ', output);
         callback(output);  //output is the topic list fetched from db
     });  
   };
@@ -45,45 +32,33 @@ var dashboardFactory = function($http) {
 
 var dashboardController = function ($scope, dashboardFactory, $location)
 {
+  // user management  => same for all application
+  $scope.getLoggedUser = function() {
+    $scope.loggedUser = dashboardFactory.getLoggedUser();
+    return $scope.loggedUser;
+  };
+
   $scope.setLoggedUser = function(name) {
     dashboardFactory.setLoggedUser(name);
-    $scope.loggedUser = dashboardFactory.getLoggedUser();
   };
 
   $scope.logIn = function() {
     var name = prompt('Input your name');
     if(name) {
-      dashboardFactory.setLoggedUser(name);
+      dashboardFactory.setLoggedUser(name);  // give name to factory
       $scope.loggedUser = dashboardFactory.getLoggedUser();   
+      $location.path('/#question');  //after login goto question page
     }     
-  }
-
-  $scope.playGame = function() {
-    $location.url('/question');  // move to question page
   };
-
-  $scope.getShowResult = function() {
-    return dashboardFactory.getShowFlag();
-  }
-
-  $scope.getLoggedUser = function() {
-    $scope.name = dashboardFactory.getLoggedUser();
-    if($scope.name) return $scope.name;
-    else return false;
-  }
-
-  $scope.getCurrentScore = function() {
-    $scope.currentScore = dashboardFactory.getCurrentScore();;
-  }
-
-  $scope.getScores = function() {
-    dashboardFactory.getScores(function(data) {
-      $scope.scores = data;
-    });
-  }
 
   $scope.logOut = function() {
     dashboardFactory.logOut();
     $scope.name = dashboardFactory.getLoggedUser();
-  }
+  };
+
+  $scope.getQuestions = function() {
+    dashboardFactory.getQuestions(function(result) {
+      $scope.questions = result;
+    });
+  };  
 }

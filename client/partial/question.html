@@ -1,17 +1,17 @@
-<div ng-controller="questionController" ng-init="getQuestions(3)">
-	Hi {{getLoggedUser()}}! <br>
-	Choose an answer for each of the questions and submit the test once done.
-	Good luck!
+<div ng-init="getQuestion()">
+	<h3> {{question.title}} </h3>
+	<h5> {{question.description}} </h5>
 
-	<div ng-repeat='question in questions'>
-		<br>
-		{{$index+1}}.&nbsp {{question.question}}? <br>
-		<div ng-repeat='answer in question.answers'>
-			<input type="radio" ng-model="question.answer" value="{{$index + 1}}">{{answer}}<br>
+	<div ng-repeat='answer in question._answers'>
+		<div class="left">
+			<h5> {{answer._user.name}}: </h5>
+			<h5> {{answer.comment}} </h5>
 		</div>
+		<div class="right">
+			<h5> {{answer.like}} likes </h5>
+			<button ng-click="like(answer)">Like!</button>
+		</div>		
 	</div> <br>
-
-	<button ng-click="cancel()">Cancel</button> &nbsp <button ng-click="submitAnswers()">Submit</button>
 </div>
 
 

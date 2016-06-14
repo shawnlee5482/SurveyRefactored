@@ -19,6 +19,7 @@
     <script src="./controllers/dashboardController.js"></script> 
     <script src="./controllers/questionController.js"></script>
     <script src="./controllers/newQuestionController.js"></script>   
+    <script src="./controllers/answersController.js"></script>     
  <!-- PUT CONTROLLERS AND FACTORIES HERE!!!! -->      
 
     <script>
@@ -26,15 +27,29 @@
     myApp.config(function($routeProvider) {
         $routeProvider
         .when('/', {
-            templateUrl: 'partial/dashboard.html'})        
+            templateUrl: 'partial/dashboard.html',
+            controller: 'dashboardController'
+        })        
         .when('/dashboard', {
-            templateUrl: 'partial/dashboard.html'})
-        .when('/question', {
-            templateUrl: 'partial/question.html'})
+            templateUrl: 'partial/dashboard.html',
+            controller: 'dashboardController'
+        })
+        .when('/question/:id', {
+            templateUrl: 'partial/question.html',
+            controller: 'questionController'
+        })
         .when('/newquestion', {
-            templateUrl: 'partial/newquestion.html'})  
+            templateUrl: 'partial/newquestion.html',
+            controller: 'newQuestionController'
+        })  
+        .when('/answers/:id', {
+            templateUrl: 'partial/answers.html',
+            controller: 'answerController'
+        })          
         .otherwise( {
-            templateUrl: 'partial/dashboard.html'}) 
+            templateUrl: 'partial/dashboard.html',
+            controller: 'dashboardController'
+        }) 
     });
 
     // Factories and Controllers
@@ -44,13 +59,15 @@
     myApp.controller('questionController', questionController); 
     myApp.factory('newQuestionFactory', newQuestionFactory);
     myApp.controller('newQuestionController', newQuestionController); 
+    myApp.factory('answerFactory', answerFactory);
+    myApp.controller('answerController', answerController);     
     </script>
 
   </head>
   <body>
     <div id="main" ng-app='myApp'>
-        <a href="#dashboard">Home</a>&nbsp&nbsp&nbsp&nbsp
-        <a href="#newquestion">Add a Question</a>
+        <a href="/#dashboard">Home</a>&nbsp&nbsp&nbsp&nbsp
+        <a href="/#newquestion">Add a Question</a>
         <div ng-view=""></div>
     </div>
   </body>
