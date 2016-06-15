@@ -14,6 +14,16 @@ module.exports = (function() {
 					res.json(result);				
 				} 
 			});
-		}
+		}, 
+		userList: function(req, res) {
+			Users.find({}, function(err, result) {
+				if(err) 
+					res.json(err);
+				else {
+					console.log('Users sever controller ', result)
+					res.json(result);				
+				} 
+			});
+		}		
 	}
 })();

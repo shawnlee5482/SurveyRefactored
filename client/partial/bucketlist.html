@@ -1,0 +1,22 @@
+<div ng-init="getBucketLists()">
+	<h3 >BucketList</h3>
+
+	<h5>Done</h5>
+
+	<div ng-repeat='bucketList in bucketLists | filter: {done: true} | orderBy: "-createdAt"'>
+	    <input type="checkbox" ng-model="bucketList.finished" disabled>
+	    <span>{{bucketList._user.name}} with {{bucketList._partner.name}}</span> |
+	    <span>{{bucketList.title}} </span> - 
+	    <span>{{bucketList.description}} </span> |
+	    <span>{{bucketList.createdAt}} |
+	</div>
+
+	<h5>Pending</h5>
+	<div ng-init="getBucketLists()" ng-repeat='bucketList in bucketLists | filter: {done: false} | orderBy: "-createdAt"'>
+	    <input type="checkbox" ng-model="bucketList.finished">
+	    <span>{{bucketList._user.name}} with {{bucketList._partner.name}} </span> |
+	    <span>{{bucketList.title}} </span> - 
+	    <span>{{bucketList.description}} </span> |
+	    <span>{{bucketList.createdAt}}
+	</div>
+</div>

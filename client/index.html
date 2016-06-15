@@ -17,9 +17,8 @@
 
  <!-- PUT CONTROLLERS AND FACTORIES HERE!!!! -->    
     <script src="./controllers/dashboardController.js"></script> 
-    <script src="./controllers/questionController.js"></script>
-    <script src="./controllers/newQuestionController.js"></script>   
-    <script src="./controllers/answersController.js"></script>     
+    <script src="./controllers/bucketListController.js"></script>
+    <script src="./controllers/loginController.js"></script>    
  <!-- PUT CONTROLLERS AND FACTORIES HERE!!!! -->      
 
     <script>
@@ -27,25 +26,17 @@
     myApp.config(function($routeProvider) {
         $routeProvider
         .when('/', {
-            templateUrl: 'partial/dashboard.html',
-            controller: 'dashboardController'
+            templateUrl: 'partial/login.html',
+            controller: 'loginController'
         })        
         .when('/dashboard', {
             templateUrl: 'partial/dashboard.html',
             controller: 'dashboardController'
         })
-        .when('/question/:id', {
-            templateUrl: 'partial/question.html',
-            controller: 'questionController'
+        .when('/bucketlist/:id', {
+            templateUrl: 'partial/bucketlist.html',
+            controller: 'bucketListController'
         })
-        .when('/newquestion', {
-            templateUrl: 'partial/newquestion.html',
-            controller: 'newQuestionController'
-        })  
-        .when('/answers/:id', {
-            templateUrl: 'partial/answers.html',
-            controller: 'answerController'
-        })          
         .otherwise( {
             templateUrl: 'partial/dashboard.html',
             controller: 'dashboardController'
@@ -55,19 +46,15 @@
     // Factories and Controllers
     myApp.factory('dashboardFactory', dashboardFactory);
     myApp.controller('dashboardController', dashboardController); 
-    myApp.factory('questionFactory', questionFactory);
-    myApp.controller('questionController', questionController); 
-    myApp.factory('newQuestionFactory', newQuestionFactory);
-    myApp.controller('newQuestionController', newQuestionController); 
-    myApp.factory('answerFactory', answerFactory);
-    myApp.controller('answerController', answerController);     
+    myApp.factory('loginFactory', loginFactory);
+    myApp.controller('loginController', loginController); 
+    myApp.factory('bucketListFactory', bucketListFactory);
+    myApp.controller('bucketListController', bucketListController);      
     </script>
 
   </head>
   <body>
-    <div id="main" ng-app='myApp'>
-        <a href="/#dashboard">Home</a>&nbsp&nbsp&nbsp&nbsp
-        <a href="/#newquestion">Add a Question</a>
+    <div id="main" ng-app='myApp'>   
         <div ng-view=""></div>
     </div>
   </body>

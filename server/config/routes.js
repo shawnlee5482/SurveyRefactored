@@ -3,40 +3,31 @@
   // We will have to require this in the server.js file (and pass it app!)
   module.exports = function(app) {
   	// First, at the top of your routes.js file you'll have to require the controller
-    var questions = require('./../controllers/questions.js');
-    var answers = require('./../controllers/answers.js');
-    var users = require('./../controllers/users.js');
+    var BucketList = require('./../controllers/bucketlist.js');
+    var Users = require('./../controllers/users.js');
     // Topics
 
-    app.get('/question/:id', function(req, res) {
-      console.log('app.get /question is called', req.params.id);
-      questions.getQuestion(req, res);
+    app.get('/bucketlist/:id', function(req, res) {
+      console.log('app.get: /bucketlist/:id is called', req.params.id);
+      BucketList.getBucketList(req, res);
     });
 
-    app.get('/questions', function(req, res) {
-      console.log('app.get /questions is called');
-      questions.getQuestions(req, res);
-    });
-
-    app.get('/answers', function(req, res) {
-      questions.submitAnswers(req, res);
-    }); 
-
-    app.post('/answer/like', function(req, res) {
-      answers.like(req, res);
-    }); 
-
-    app.post('/newquestion', function(req, res) {
-      questions.newQuestion(req, res);
+    app.post('/newbucketlist', function(req, res) {
+      console.log('app.post: /newbucketlist ', req.body);
+      BucketList.newBucketList(req, res);
     });
 
     app.post('/user', function(req, res) {
-      console.log('app.post /user ', req.body);
-      users.newUser(req, res);
+      console.log('app.post: /user ', req.body);
+      Users.newUser(req, res);
     });      
-
-    app.post('/newanswer', function(req, res) {
-      answers.newAnswer(req, res);
+    app.get('/user', function(req, res) {
+      console.log('app.get: /user ');
+      Users.userList(req, res);
     });  
 
+    app.get('/mark/:id', function(req, res) {
+      console.log('app.get: /mark ', req.params.id);
+      BucketList.mark(req, res);
+    });
 };

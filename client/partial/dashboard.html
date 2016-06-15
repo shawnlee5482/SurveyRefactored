@@ -1,25 +1,26 @@
-<style>
-</style>
-<div>
-  <button ng-hide="getLoggedUser()" ng-click="logIn()">Login</button>
-  <h3 ng-hide="getLoggedUser()">Press Login to ask a question and answer</h3>
-  <button ng-show="getLoggedUser()" ng-click="logOut()">LogOut</button>
-</div>
+<div ng-init = "getBucketLists()" >
+    <h1>Welcome {{loggedUserName}} </h1> <br>
 
-Search: <input type="text" ng-model="filter_name">
-<table class="table table-condensed" ng-init="getQuestions()">
-    <thead>
-        <tr>
-            <th>Quetion</th>
-            <th>Answers</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr ng-repeat='question in questions | filter: filter_name | orderBy: "-createdAt"'>
-            <td ng-bind='question.title'></td>
-            <td ng-bind='question._answers.length'></td>
-            <td> <a ng-href="/#question/{{question._id}}">Show</a> <a ng-href="/#answers/{{question._id}}">Answer</a></td>
-        </tr>
-    </tbody>
-</table>
+    title <input type="text" ng-model="newBucketList.title"> <br>
+    description<input type="text" ng-model="newBucketList.description"><br>
+        partner <select ng-model="partner" ng-init="getPartnerLists()" ng-options="partner.name for partner in partners"></select> <br><br>
+    <button ng-click="addNewBucketList(newBucketList)">Add to List </button>
+
+    <br><br>
+    Before I die I want to
+
+    <div ng-repeat="bucketList in bucketLists" | orderBy: "-createdAt"'>
+        <input ng-click="mark(bucketList)" ng-bind="bucketList.done" type="checkbox" ng-model="bucketList.done">
+        <span>{{bucketList._user.name}}</span> |
+        <span width="30">{{bucketList.title}} </span> - 
+        <span width="30">{{bucketList.description}} </span>
+        <span>{{bucketList.createdAt}}</span>
+    </div>
+    <br><br>
+    List of Users
+    <div ng-init="getUserLists()">
+        <div  ng-repeat="user in users">
+            <a ng-href="/#bucketlist/{{user._id}}"> {{user.name}} </a>
+        </div>
+    </div>
+</div>
