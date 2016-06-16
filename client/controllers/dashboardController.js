@@ -3,7 +3,6 @@ var dashboardFactory = function($http) {
 
   // local
   factory.getBucketLists = function(id, callback) {
-    console.log('bucketList factory getBucketList', id);
     $http.get('/bucketlist/'+ id).success(function(output) {
         callback(output);  //output is the topic list fetched from db
         // if it is successfully added popup alert 'questions are successfully added'
@@ -11,18 +10,14 @@ var dashboardFactory = function($http) {
   };
 
   factory.getUserLists = function(callback) {
-    console.log('dashboard factory getUserLists');
     $http.get('/user').success(function(output) {
-        console.log('djsssssssssssssssssssssssssss', output);
         callback(output);  //output is the topic list fetched from db
         // if it is successfully added popup alert 'questions are successfully added'
     });  
   }; 
 
   factory.addNewBucketList = function(newBucketList, callback) {
-    console.log('dashboard factory addNewBucketList');
     $http.post('/newbucketlist', newBucketList).success(function(output) {
-        console.log('newbucketlist', output);
         callback(output);  //output is the topic list fetched from db
         // if it is successfully added popup alert 'questions are successfully added'
     });  
@@ -39,7 +34,6 @@ var dashboardFactory = function($http) {
 
   factory.mark = function(bucketList, callback) {
       $http.get('/mark/'+ bucketList._id).success(function(output) {
-        console.log('mark', output);
         callback(output);  //output is the topic list fetched from db
         // if it is successfully added popup alert 'questions are successfully added'
       });  
@@ -51,59 +45,37 @@ var dashboardFactory = function($http) {
 var dashboardController = function ($scope, loginFactory, bucketListFactory, dashboardFactory, $location)
 {
   // user management  => same for all application
-  $scope.getLoggedUser = function() {
-    $scope.loggedUser = dashboardFactory.getLoggedUser();
-    return $scope.loggedUser;
-  };
-
-  $scope.setLoggedUser = function(name) {
-    dashboardFactory.setLoggedUser(name);
-  };
-
-  $scope.logIn = function() {
-    var name = prompt('Input your name');
-    if(name) {
-      dashboardFactory.setLoggedUser(name);  // give name to factory
-      $scope.loggedUser = dashboardFactory.getLoggedUser();   
-      $location.path('/#question');  //after login goto question page
-    }     
-  };
-
-  $scope.logOut = function() {
-    dashboardFactory.logOut();
-    $scope.name = dashboardFactory.getLoggedUser();
-  };
+  $scope.loggedUser = loginFactory.getLoggedUser();
 
   $scope.getUserLists = function() {
-    console.log('DashboardController getUserLists');
     dashboardFactory.getUserLists(function(result) {
+      console.log('DashboardController getUserLists ', result);
       $scope.users = result;
       console.log('dashboardcontroller getuserlist response from sever', $scope.users);
     });
   }; 
 
   $scope.getPartnerLists = function() {
-    console.log('DashboardController getPartnerLists');
-    dashboardFactory.getUserLists(function(result) {
+    
+    dashboardFactory.getUserLists(function(results) {
+      console.log('DashboardController getPartnerLists ', results);
       // remove current user
-      $scope.partners = result;
 
-      if(result && $scope.loggedUser) {
-        var res = [];
+      var res = [];
+      console.log('current logged user = ', loginFactory.getLoggedUser());
 
-        for(var i = 0; i < $scope.partners.length; i++) {
-          if($scope.partners[i]._id != $scope.loggedUser._id) res.push($scope.partners[i]);
-        }
-        $scope.partners = res;
-
-        console.log('dashboardcontroller getjparetnerlist response from sever', $scope.partners);
+      for(var i = 0; i < results.length; i++) {
+        if(results[i]._id != loginFactory.getLoggedUser()._id) res.push(results[i]);
       }
+      $scope.partners = res;
+      console.log('dashboardcontroller getjparetnerlist response from sever', $scope.partners);
     });
   }; 
 
   $scope.getBucketLists = function() {
-    console.log('logged user in getBucketList', loginFactory.getLoggedUser());
+    console.log('dashboardController getBucketList user= ', loginFactory.getLoggedUser());
     dashboardFactory.getBucketLists(loginFactory.getLoggedUser()._id, function(result) {
+      console.log('dashboardController getBucketList response from server = ', result);      
       $scope.bucketLists = result;
       $scope.loggedUserName = loginFactory.getLoggedUser().name;
     });
@@ -113,11 +85,20 @@ var dashboardController = function ($scope, loginFactory, bucketListFactory, das
     newBucketList._user = loginFactory.getLoggedUser()._id;
     if($scope.partner) newBucketList._partner = $scope.partner._id;
     newBucketList.done = false;
-    console.log('addNewBucketList', newBucketList);
+
     dashboardFactory.addNewBucketList(newBucketList, function(result) {
+      console.log('addNewBucketList return form server: ', newBucketList);
       $scope.getBucketLists();
     });
-  };   
+  };
+
+  $scope.isValid = function() {
+    var newBucketList = $scope.newBucketList;
+    if(!newBucketList) return false;
+    if(!newBucketList.title || newBucketList.title.length < 5) return false;
+    if(!newBucketList.description || newBucketList.description.length < 10) return false;
+    return true;
+  };
 
   $scope.mark = function(bucketList) {
     dashboardFactory.mark(bucketList, function(output) {

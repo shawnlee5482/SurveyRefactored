@@ -1,17 +1,17 @@
 <div ng-init = "getBucketLists()" >
-    <h1>Welcome {{loggedUserName}} </h1> <br>
+    <h1>Welcome {{loggedUser.name}} </h1> <br>
 
     title <input type="text" ng-model="newBucketList.title"> <br>
     description<input type="text" ng-model="newBucketList.description"><br>
         partner <select ng-model="partner" ng-init="getPartnerLists()" ng-options="partner.name for partner in partners"></select> <br><br>
-    <button ng-click="addNewBucketList(newBucketList)">Add to List </button>
+    <button ng-click="addNewBucketList(newBucketList)" ng-show="isValid()">Add to List </button>
 
     <br><br>
     Before I die I want to
 
     <div ng-repeat="bucketList in bucketLists" | orderBy: "-createdAt"'>
         <input ng-click="mark(bucketList)" ng-bind="bucketList.done" type="checkbox" ng-model="bucketList.done">
-        <span>{{bucketList._user.name}}</span> |
+        <span>{{bucketList._user.name}} with {{bucketList._partner.name}}</span> |
         <span width="30">{{bucketList.title}} </span> - 
         <span width="30">{{bucketList.description}} </span>
         <span>{{bucketList.createdAt}}</span>

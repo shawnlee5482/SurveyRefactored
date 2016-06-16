@@ -24,11 +24,29 @@ module.exports = (function() {
 			console.log('server controller newBucketList = ', req.body);
 			// Questions.create creates a new document and save together at one time
 			BucketList.create(req.body, function(err, results) {
-				if(err) 
+				if(err) {
 					res.json(err);
-				else 
-					res.json(results);
+					return;
+				} else { 
+					if(req.body._partner == null) {
+						res.json(results);
+						return;
+					}
+				}
 			});
+			// if there is a partner
+			if(req.body._partner) {
+				// swap user and partner
+				var temp = req.body._partner;
+				req.body._partner = req.body._user;
+				req.body._user = temp;
+				BucketList.create(req.body, function(err, results) {
+					if(err) 
+						res.json(err);
+					else 
+						res.json(results);
+				});	
+			}		
 		},
 		mark: function(req, res) {
 			console.log('server controller mark = ', req.params.id);

@@ -1,6 +1,8 @@
 
 var loginFactory = function($http) {
-  var factory = {loggedUser: null};
+  var factory = {};
+  
+  factory.loggedUser = null;
 
   // ajax
   factory.getLoggedUser= function() {
@@ -9,7 +11,6 @@ var loginFactory = function($http) {
 
   factory.login = function(user, callback) {
     $http.post('/user', user).success(function(output) {
-        console.log('registered user: ', output);
         callback(output);
         factory.loggedUser = output;  //output is the topic list fetched from db
     });  
@@ -24,6 +25,7 @@ var loginController = function($scope, loginFactory, $routeParams, $location) {
 
   $scope.login = function() {
     loginFactory.login($scope.user, function(data) {
+      console.log('loginController response from server: ', data);      
       $location.path("/dashboard");
     });
   };
