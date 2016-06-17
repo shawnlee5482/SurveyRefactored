@@ -3,31 +3,37 @@
   // We will have to require this in the server.js file (and pass it app!)
   module.exports = function(app) {
   	// First, at the top of your routes.js file you'll have to require the controller
-    var BucketList = require('./../controllers/bucketlist.js');
+    var Surveys = require('./../controllers/surveys.js');
     var Users = require('./../controllers/users.js');
     // Topics
-
-    app.get('/bucketlist/:id', function(req, res) {
-      console.log('app.get: /bucketlist/:id is called', req.params.id);
-      BucketList.getBucketList(req, res);
-    });
-
-    app.post('/newbucketlist', function(req, res) {
-      console.log('app.post: /newbucketlist ', req.body);
-      BucketList.newBucketList(req, res);
-    });
 
     app.post('/user', function(req, res) {
       console.log('app.post: /user ', req.body);
       Users.newUser(req, res);
     });      
-    app.get('/user', function(req, res) {
-      console.log('app.get: /user ');
-      Users.userList(req, res);
-    });  
 
-    app.get('/mark/:id', function(req, res) {
-      console.log('app.get: /mark ', req.params.id);
-      BucketList.mark(req, res);
+    app.get('/survey/:id', function(req, res) {
+      console.log('app.get: /survey/:id is called', req.params.id);
+      Surveys.getSurvey(req, res);
+    });
+
+    app.get('/delete/:id', function(req, res) {
+      console.log('app.get: /delete/:id is called', req.params.id);
+      Surveys.delete(req, res);
+    });
+
+    app.get('/surveylist', function(req, res) {
+      console.log('app.get: /surveylist is called');
+      Surveys.getSurveyList(req, res);
+    });
+
+    app.post('/newsurvey', function(req, res) {
+      console.log('app.post: /newsurvey ', req.body);
+      Surveys.newSurvey(req, res);
+    });
+
+    app.post('/mark', function(req, res) {
+      console.log('routes.js, app.post, /mark ', req.body);
+      Surveys.mark(req, res);
     });
 };

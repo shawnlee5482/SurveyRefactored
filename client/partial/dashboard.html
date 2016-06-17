@@ -1,26 +1,31 @@
-<div ng-init = "getBucketLists()" >
+<div>
     <h1>Welcome {{loggedUser.name}} </h1> <br>
 
-    title <input type="text" ng-model="newBucketList.title"> <br>
-    description<input type="text" ng-model="newBucketList.description"><br>
-        partner <select ng-model="partner" ng-init="getPartnerLists()" ng-options="partner.name for partner in partners"></select> <br><br>
-    <button ng-click="addNewBucketList(newBucketList)" ng-show="isValid()">Add to List </button>
+    <a ng-href="/#newsurvey">Create New Poll</a>
+    <table class="table table-condensed" ng-init="getSurveyLists()"> 
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Survey Question</th>
+                <th>Date Posted</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat='survey in surveyList | filter: filter_name | orderBy: "-createdAt"'>  
+<!-- var SurveySchema = new mongoose.Schema({
+    _creator: {type: Schema.Types.ObjectId, ref: 'Users'},  
+    question: String, 
+    options: [String],
+    votes: [Number]
+}, {timestamps: true}); -->
+                <td ng-bind='survey._creator.name'></td>
+                <td> <a href="/#details/{{survey._id}}">{{survey.question}}</a></td>
+                <td> {{survey.createdAt | date : "fullDate"}}
+                <td> <button ng-show="isDeletable(survey)" ng-click="delete(survey._id)">Delete</a></td>
+            </tr>
+        </tbody>
+    </table> 
 
-    <br><br>
-    Before I die I want to
-
-    <div ng-repeat="bucketList in bucketLists" | orderBy: "-createdAt"'>
-        <input ng-click="mark(bucketList)" ng-bind="bucketList.done" type="checkbox" ng-model="bucketList.done">
-        <span>{{bucketList._user.name}} with {{bucketList._partner.name}}</span> |
-        <span width="30">{{bucketList.title}} </span> - 
-        <span width="30">{{bucketList.description}} </span>
-        <span>{{bucketList.createdAt}}</span>
-    </div>
-    <br><br>
-    List of Users
-    <div ng-init="getUserLists()">
-        <div  ng-repeat="user in users">
-            <a ng-href="/#bucketlist/{{user._id}}"> {{user.name}} </a>
-        </div>
-    </div>
+    <button ng-click="logOut()">LogOut</button>   
 </div>

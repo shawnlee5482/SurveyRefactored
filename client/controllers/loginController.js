@@ -1,7 +1,7 @@
 
 var loginFactory = function($http) {
   var factory = {};
-  
+
   factory.loggedUser = null;
 
   // ajax
@@ -15,6 +15,11 @@ var loginFactory = function($http) {
         factory.loggedUser = output;  //output is the topic list fetched from db
     });  
   };
+
+  factory.logout = function(user, callback) {
+    factory.loggedUser = null; 
+  };
+
   return factory;
 };    
 
@@ -25,7 +30,8 @@ var loginController = function($scope, loginFactory, $routeParams, $location) {
 
   $scope.login = function() {
     loginFactory.login($scope.user, function(data) {
-      console.log('loginController response from server: ', data);      
+      console.log('loginController response from server: ', data);
+      // we should move to dashboard page in the callback      
       $location.path("/dashboard");
     });
   };

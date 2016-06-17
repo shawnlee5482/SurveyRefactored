@@ -1,0 +1,22 @@
+<h3>Put the questions and options here</h3>
+<!-- var ElectionSchema = new mongoose.Schema({
+	_creator: {type: Schema.Types.ObjectId, ref: 'Users'},	
+	title: String, 
+	description: String,
+	options: [String],
+	votes: [Number]
+}, {timestamps: true}); -->
+
+<span>Question</span> <input type="text" ng-model="newSurvey.question"><br>
+
+<!-- <div ng-repeat="option in options">
+	<span>Option{{$index}}</span> <input type="text" ng-model="option"><br>
+</div> -->
+<span>Option1</span> <input type="text" ng-model="newSurvey.option1"><br>
+<span>Option2</span> <input type="text" ng-model="newSurvey.option2"><br>
+<span>Option3</span> <input type="text" ng-model="newSurvey.option3"><br>
+<span>Option4</span> <input type="text" ng-model="newSurvey.option4"><br>
+
+<button ng-click="cancel()">Cancel</button>&nbsp
+<button ng-show="isValid()" ng-click="addNewSurvey()">Submit</button> <br>
+<p ng-show="!isValid()" style="color:red">Please input question(at least 8) and description (at least 3) and There should be no empty field</p>

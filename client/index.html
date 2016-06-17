@@ -17,8 +17,10 @@
 
  <!-- PUT CONTROLLERS AND FACTORIES HERE!!!! -->    
     <script src="./controllers/dashboardController.js"></script> 
-    <script src="./controllers/bucketListController.js"></script>
-    <script src="./controllers/loginController.js"></script>    
+    <script src="./controllers/details.js"></script>
+    <script src="./controllers/newsurvey.js"></script>    
+    <script src="./controllers/loginController.js"></script>   
+
  <!-- PUT CONTROLLERS AND FACTORIES HERE!!!! -->      
 
     <script>
@@ -33,13 +35,17 @@
             templateUrl: 'partial/dashboard.html',
             controller: 'dashboardController'
         })
-        .when('/bucketlist/:id', {
-            templateUrl: 'partial/bucketlist.html',
-            controller: 'bucketListController'
-        })
+        .when('/newsurvey', {
+            templateUrl: 'partial/newsurvey.html',
+            controller: 'newSurveyController'
+        }) 
+        .when('/details/:id', {
+            templateUrl: 'partial/details.html',
+            controller: 'detailsController'
+        })              
         .otherwise( {
-            templateUrl: 'partial/dashboard.html',
-            controller: 'dashboardController'
+            templateUrl: 'partial/login.html',
+            controller: 'loginController'
         }) 
     });
 
@@ -48,8 +54,10 @@
     myApp.controller('dashboardController', dashboardController); 
     myApp.factory('loginFactory', loginFactory);
     myApp.controller('loginController', loginController); 
-    myApp.factory('bucketListFactory', bucketListFactory);
-    myApp.controller('bucketListController', bucketListController);      
+    myApp.factory('detailsFactory', detailsFactory);
+    myApp.controller('detailsController', detailsController);   
+    myApp.factory('newSurveyFactory', newSurveyFactory);
+    myApp.controller('newSurveyController', newSurveyController);        
     </script>
 
   </head>

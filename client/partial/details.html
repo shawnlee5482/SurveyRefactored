@@ -1,0 +1,21 @@
+<div  ng-init="getDetails()">
+	<h3 >{{details.question}}</h3>
+    <h5>Click the vote button to choose one </h5>
+    <table class="table table-condensed" ng-init="getSurveyLists()">
+        <thead>
+            <tr>
+                <th>Option</th>
+                <th>Current Count of Votes</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat='option in details.options | orderBy: "-createdAt"'>  
+                <td ng-bind='option'></td>
+                <td ng-bind='details.votes[$index]'></td>
+                <td> <button ng-click="mark($index)">Vote</button> </td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="/#dashboard">Return to Dashboard </a> 
+</div>
