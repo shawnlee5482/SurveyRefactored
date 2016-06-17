@@ -44,7 +44,6 @@ var dashboardController = function ($scope, loginFactory, dashboardFactory, $loc
   };
 
   $scope.isDeletable = function(survey) {
-    console.log('survey creator, loggedUser ', survey._creator, $scope.loggedUser._id);
     if(survey._creator._id == $scope.loggedUser._id) return true;
     else return false;
   }
