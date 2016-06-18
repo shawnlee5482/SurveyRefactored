@@ -9,13 +9,12 @@
 
 <span>Question</span> <input type="text" ng-model="newSurvey.question"><br>
 
-<!-- <div ng-repeat="option in options">
-	<span>Option{{$index}}</span> <input type="text" ng-model="option"><br>
-</div> -->
-<span>Option1</span> <input type="text" ng-model="newSurvey.option1"><br>
-<span>Option2</span> <input type="text" ng-model="newSurvey.option2"><br>
-<span>Option3</span> <input type="text" ng-model="newSurvey.option3"><br>
-<span>Option4</span> <input type="text" ng-model="newSurvey.option4"><br>
+<div ng-repeat="option in newSurvey.options track by $index">
+<span>Option{{$index}}</span> <input type="text" ng-model="newSurvey.options[$index]"><br>
+</div>
+<span>
+
+</span>
 
 <button ng-click="cancel()">Cancel</button>&nbsp
 <button ng-show="isValid()" ng-click="addNewSurvey()">Submit</button> <br>

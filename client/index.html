@@ -5,6 +5,8 @@
  <!-- THESE TWO VERSIONS BELOW MUST MATCH!!!! -->
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.5/angular-route.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.16/angular-resource.min.js"></script>
+    
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -12,16 +14,19 @@
 
     <script>
     //  inject the ngRoute dependency in the module.
-    var myApp = angular.module('myApp', ['ngRoute']);
+    var myApp = angular.module('myApp', ['ngRoute', 'ngResource']);
     </script>
 
- <!-- PUT CONTROLLERS AND FACTORIES HERE!!!! -->    
-    <script src="./controllers/dashboardController.js"></script> 
+
+ <!-- PUT FACTORIES HERE!!!! -->      
+    <script src="./factories/survey.js"></script> 
+    <script src="./factories/user.js"></script>
+
+ <!-- PUT CONTROLLERS HERE!!!! -->    
+    <script src="./controllers/dashboard.js"></script> 
     <script src="./controllers/details.js"></script>
     <script src="./controllers/newsurvey.js"></script>    
-    <script src="./controllers/loginController.js"></script>   
-
- <!-- PUT CONTROLLERS AND FACTORIES HERE!!!! -->      
+    <script src="./controllers/login.js"></script>   
 
     <script>
     // setup route
@@ -50,13 +55,12 @@
     });
 
     // Factories and Controllers
-    myApp.factory('dashboardFactory', dashboardFactory);
-    myApp.controller('dashboardController', dashboardController); 
+    myApp.factory('surveyFactory', surveyFactory);
     myApp.factory('loginFactory', loginFactory);
+
+    myApp.controller('dashboardController', dashboardController); 
     myApp.controller('loginController', loginController); 
-    myApp.factory('detailsFactory', detailsFactory);
     myApp.controller('detailsController', detailsController);   
-    myApp.factory('newSurveyFactory', newSurveyFactory);
     myApp.controller('newSurveyController', newSurveyController);        
     </script>
 

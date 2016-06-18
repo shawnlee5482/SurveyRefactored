@@ -27,7 +27,7 @@ module.exports = (function() {
 				}
 			});
 		}, 
-		userList: function(req, res) {
+		getUsers: function(req, res) {
 			Users.find({}, function(err, result) {
 				if(err) 
 					res.json(err);
@@ -36,6 +36,44 @@ module.exports = (function() {
 					res.json(result);				
 				} 
 			});
-		}		
+		},
+		getUser: function(req, res) {
+			console.log('Survey controller getSurvey is called', req.params.id);
+			Users.findOne({_id:req.params.id})		
+			.exec(function(err, result) {
+				if(err) {
+					console.log('error in user server controller: ', err);
+					res.json(err);
+				} else {
+					console.log('user server controller result: ', result)
+					res.json(result);
+				}
+			});
+		},
+		deleteUser: function(req, res) {
+			console.log('server controller delete = ', req.params._id);
+			// Questions.create creates a new document and save together at one time
+			Users.remove({_id: req.params.id}, function(err, results) {
+				if(err) {
+					res.json(err);
+					return;
+				} else { 
+					res.json(results);
+					return;
+				}
+			});		
+		},		
+		updateUser: function(req, res) {
+			console.log('server controller update req.body: ', req.body);
+			Users.update({_id:req.body.id}, req.body.update, req.body.options, function(err, result) {
+				if(err) {
+					console.log('server controller update error: ', err);
+					res.json(err);
+				} else {
+					console.log('server controller update success: ', result);
+					res.json(result);
+				}
+			});
+		}							
 	}
 })();

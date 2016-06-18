@@ -6,7 +6,7 @@ var Surveys = mongoose.model('Surveys');
 // Edit the show method as follows
 module.exports = (function() {
 	return {
-		getSurveyList: function(req, res) {
+		getSurveys: function(req, res) {
 			console.log('Surveys controller getSurveyList is called', req.params.id);
 			Surveys.find({})
 			.populate('_creator')		
@@ -47,7 +47,7 @@ module.exports = (function() {
 				}
 			});		
 		},
-		delete: function(req, res) {
+		deleteSurvey: function(req, res) {
 			console.log('server controller delete = ', req.params._id);
 			// Questions.create creates a new document and save together at one time
 			Surveys.remove({_id: req.params.id}, function(err, results) {
@@ -60,27 +60,36 @@ module.exports = (function() {
 				}
 			});		
 		},		
-		mark: function(req, res) {
-			console.log('server controller mark = ', req.body);
+		updateSurvey: function(req, res) {
+			console.log('server controller update req.body: ', req.body);
 			// Questions.create creates a new document and save together at one time
-			Surveys.findOne({_id:req.body.id}, function(err, result) {
+			// Surveys.findOne({_id:req.body.id}, function(err, result) {
+			// 	if(err) {
+			// 		console.log('server mark error', err);
+			// 		res.json(err);
+			// 	} else {
+			// 		var option = req.body.option;
+			// 		console.assert(0 <= option && option <= 3);
+			// 		console.log('result', JSON.stringify(result));
+			// 		result.votes[option]++;
+
+			// 		Surveys.update({_id: req.body.id}, {$set: {votes: result.votes}}, function(err,result) {
+			// 			if(err) {
+
+			// 			} else {
+			// 				console.log('mark server done', result)
+			// 				res.json(result);							
+			// 			}
+			// 		});
+			// 	}
+			// });
+			Surveys.update({_id:req.body._id}, {$set: {votes: req.body.votes}}, function(err, result) {
 				if(err) {
-					console.log('server mark error', err);
+					console.log('server controller update error: ', err);
 					res.json(err);
 				} else {
-					var option = req.body.option;
-					console.assert(0 <= option && option <= 3);
-					console.log('result', JSON.stringify(result));
-					result.votes[option]++;
-
-					Surveys.update({_id: req.body.id}, {$set: {votes: result.votes}}, function(err,result) {
-						if(err) {
-
-						} else {
-							console.log('mark server done', result)
-							res.json(result);							
-						}
-					});
+					console.log('server controller update success: ', result);
+					res.json(result);
 				}
 			});
 		}		

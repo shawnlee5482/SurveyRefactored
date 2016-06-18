@@ -10,7 +10,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat='option in details.options | orderBy: "-createdAt"'>  
+            <tr ng-repeat='option in details.options track by $index | orderBy: "-createdAt"'>  
                 <td ng-bind='option'></td>
                 <td ng-bind='details.votes[$index]'></td>
                 <td> <button ng-click="mark($index)">Vote</button> </td>
